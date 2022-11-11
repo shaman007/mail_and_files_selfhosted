@@ -1,0 +1,2 @@
+example.com._domainkey IN      TXT     ( "v=DKIM1; k=rsa; "
+          "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCvGRWfWPPZVIg0fy7Pr0+rsBsoL6Imt1GBE/QRd3X5Izv1iAJFUsOteaf9TI9EO/YFwoLLahzuoZM1aUU4ED3fHlItEnqXCKQhX8Zripi7cfIO+DRFEhGuQtG6OIuA6+c3ivao7DTPk/IFqY7MG5M3wMvAfV+eIBf1VjmajSwe3wIDAQAB" )  ; ----- DKIM key andreybondarenko.com for com

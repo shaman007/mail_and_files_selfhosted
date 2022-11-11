@@ -1,0 +1,27 @@
+own-cloud:
+  hosts:
+    example.com.com:
+      host_ip: 15.11.12.10
+      host_name: example.com
+      cloud_name: cloud.example.com
+      user: user
+      additional_dest: example2.com
+      password: QWerty213!
+      dkim_secret: "-----BEGIN RSA PRIVATE KEY-----\n
+                    MII...F\n
+                    ...
+                    W  ... srp\n
+                    -----END RSA PRIVATE KEY-----"
+      wp_secret: "define('AUTH_KEY',         '...');\n
+                  define('SECURE_AUTH_KEY',  '...');\n
+                  define('LOGGED_IN_KEY',    '...');\n
+                  define('NONCE_KEY',        '...');\n
+                  define('AUTH_SALT',        '...');\n
+                  define('SECURE_AUTH_SALT', '...');\n
+                  define('LOGGED_IN_SALT',   '...');\n
+                  define('NONCE_SALT',       '...');\n"
+      auth_keys: ":ssh-rsa AA....com\n
+                   
+      default_private: "-----BEGIN RSA PRIVATE KEY-----\n
+                        MIIC...rp\n
+                        -----END RSA PRIVATE KEY-----"

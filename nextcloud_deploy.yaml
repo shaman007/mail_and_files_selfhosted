@@ -1,0 +1,15 @@
+---
+- name: Deploy nextcloud
+  hosts: all
+  become: yes
+  remote_user: root
+  vars:
+    to_run:
+    - "chown -R nginx.nginx /var/lib/php/*"
+    - "wget https://download.nextcloud.com/server/releases/latest.zip"
+    - "unzip -o latest.zip -d /var/www/html"
+    - "chown -R nginx.nginx /var/www/html"
+  tasks:
+    - name: Do the things
+      ansible.builtin.shell: '{{ item }}'
+      loop: '{{ to_run }}'

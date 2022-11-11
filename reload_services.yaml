@@ -1,0 +1,22 @@
+---
+- name: Reload all services on the host
+  hosts: all
+  become: yes
+  vars:
+    services:
+      - nginx
+      - php-fpm
+      - postfix
+      - dovecot
+      - mariadb
+      - postgrey
+      - opendkim
+  remote_user: root
+  tasks:
+    - name: Start services
+      ansible.builtin.systemd:
+        name: '{{ item }}'
+        daemon_reload: yes
+        state: restarted
+        enabled: yes
+      loop: '{{ services }}'

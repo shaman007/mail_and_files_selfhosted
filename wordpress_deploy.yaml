@@ -1,0 +1,58 @@
+---
+- name: Deploy wordpress
+  hosts: all
+  become: yes
+  vars:
+    plugins:
+     - https://downloads.wordpress.org/plugin/wordpress-importer.0.8.zip
+     - https://downloads.wordpress.org/plugin/tuxedo-big-file-uploads.2.1.1.zip
+    plugin_file:
+     - wordpress-importer.0.8.zip
+     - tuxedo-big-file-uploads.2.1.1.zip
+    services:
+      - nginx
+      - php-fpm
+  remote_user: root
+  tasks:
+    - name: Put nginx conf
+      template:
+        src: nginx.conf.j2
+        dest:  /etc/nginx/nginx.conf
+        owner: nginx
+        group: nginx
+    - name: Put php-fpm conf
+      template:
+        src: php-fpm.conf.www.j2
+        dest:  /etc/php-fpm.d/www.conf
+    - name: Put wordpress conf
+      template:
+        src: wp-config.php.j2
+        dest:  /etc/wordpress/wp-config.php
+        owner: nginx
+        group: nginx
+    - name: Put PHP conf
+      ansible.builtin.copy:
+        src: templates/php.ini
+        dest:  /etc/php.ini
+        owner: nginx
+        group: nginx
+#get plugins
+    - name: download plugins from given URIs
+      ansible.builtin.shell: wget {{ item }}
+      loop: '{{ plugins }}'
+#can do better here but I'm lazy
+    - name: unzip all to /usr/share/wordpress/wp-content/plugins/
+      ansible.builtin.shell: unzip -o {{ item }} -d /usr/share/wordpress/wp-content/plugins/
+      loop: '{{ plugin_file }}'
+#Using chown due to it's way faster
+    - name: Chown wordpress dir
+      ansible.builtin.shell: chown -R nginx:nginx /usr/share/wordpress
+    - name: Chown wordpress conf
+      ansible.builtin.shell: chown -R nginx:nginx /etc/wordpress
+    - name: Start services
+      ansible.builtin.systemd:
+        name: '{{ item }}'
+        daemon_reload: yes
+        state: restarted
+        enabled: yes
+      loop: '{{ services }}'

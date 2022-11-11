@@ -1,0 +1,121 @@
+---
+- name: Deploy mail services
+  hosts: all
+  become: yes
+  vars:
+    - hostname: '{{ host_name }}'
+  remote_user: root
+  tasks:
+    - name: Put main.cf
+      template:
+        src: main.cf.j2
+        dest:  /etc/postfix/main.cf
+        owner: root
+        group: root 
+    - name: Put master.cf
+      ansible.builtin.copy:
+        src: templates/master.cf
+        dest:  /etc/postfix/master.cf
+        owner: root
+        group: root
+    - name: Put virtual
+      ansible.builtin.copy:
+        src: templates/virtual
+        dest:  /etc/postfix/virtual
+        owner: root
+        group: root
+    - name: Put dovecot.conf
+      ansible.builtin.copy:
+        src: templates/dovecot.conf
+        dest:  /etc/dovecot/dovecot.conf
+        owner: root
+        group: root
+    - name: Put 15-lda.conf
+      ansible.builtin.copy:
+        src: templates/15-lda.conf
+        dest:  /etc/dovecot/conf.d/15-lda.conf
+        owner: root
+        group: root
+    - name: Put 20-managesieve.conf
+      ansible.builtin.copy:
+        src: templates/20-managesieve.conf
+        dest:  /etc/dovecot/conf.d/20-managesieve.conf
+        owner: root
+        group: root
+    - name: Put 10-auth.conf
+      ansible.builtin.copy:
+        src: templates/10-auth.conf
+        dest:  /etc/dovecot/conf.d/10-auth.conf
+        owner: root
+        group: root
+    - name: Put 10-ssl.conf
+      template:
+        src: 10-ssl.conf.j2
+        dest:  /etc/dovecot/conf.d/10-ssl.conf
+        owner: root
+        group: root
+    - name: Put 10-mail.conf
+      ansible.builtin.copy:
+        src: templates/10-mail.conf
+        dest:  /etc/dovecot/conf.d/10-mail.conf
+        owner: root
+        group: root
+    - name: Put opendkim.conf
+      ansible.builtin.copy:
+        src: templates/opendkim.conf
+        dest:  /etc/opendkim.conf
+        owner: root
+        group: root
+    - name: Put private key
+      template:
+        src: example.com.private.j2
+        dest:  /etc/opendkim/example.com.private
+        owner: opendkim
+        group: opendkim
+        mode: '0400'
+    - name: Put default.private key
+      template:
+        src: default.private.j2
+        dest:  /etc/opendkim/keys/default.private
+        owner: opendkim
+        group: opendkim
+        mode: '0400'
+    - name: Put keytable
+      ansible.builtin.copy:
+        src: templates/keytable
+        dest:  /etc/opendkim/keytable
+        owner: opendkim
+        group: opendkim
+        mode: '0644'
+    - name: Put signingtable
+      ansible.builtin.copy:
+        src: templates/signingtable
+        dest:  /etc/opendkim/signingtable
+        owner: opendkim
+        group: opendkim
+        mode: '0644'
+    - name: Put example.com.txt
+      ansible.builtin.copy:
+        src: templates/example.com.txt
+        dest:  /etc/opendkim/example.com.txt
+        owner: opendkim
+        group: opendkim
+        mode: '0644'
+    - name: adding existing user dovecot to group mail
+      user:
+        name: dovecot
+        groups: mail
+        append: yes
+    - name: adding existing user postgrey to group mail
+      user:
+        name: postgrey
+        groups: mail
+        append: yes
+    - name: hash files
+      ansible.builtin.shell: postmap /etc/postfix/*
+    - name: mail permisson fix 1
+      ansible.builtin.shell: touch /var/mail/{{ user }}
+    - name: mail permisson fix 2
+      ansible.builtin.shell: chown {{ user }}.mail /var/mail/{{ user }}
+    - name: mail permoisson fix 3
+      ansible.builtin.shell: chmod 600 /var/mail/{{ user }}

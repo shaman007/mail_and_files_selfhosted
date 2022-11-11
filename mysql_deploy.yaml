@@ -1,0 +1,49 @@
+---
+- name: Install mysql
+  hosts: all
+  become: yes
+  remote_user: root
+  vars:
+    - mysql_root_password: {{ password }}
+    - socket: '/var/lib/mysql/mysql.sock'
+  tasks:
+    # MySQL Configuration
+    - name: Put local mysql conf
+      template:
+        src: .my.cnf.j2
+        dest:  /root/.my.cnf
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Put mariadb-server conf
+      ansible.builtin.copy:
+        src: templates/mariadb-server.cnf
+        dest:  /etc/my.cnf.d/mariadb-server.cnf
+        owner: root
+        group: root
+
+    - name: Sets the root password
+      mysql_user:
+        name: root
+        password: "{{ mysql_root_password }}"
+        login_unix_socket: '{{ socket }}'
+        
+    - name: Removes all anonymous user accounts
+      mysql_user:
+        name: ''
+        host_all: yes
+        state: absent
+        login_unix_socket: '{{ socket }}'
+
+    - name: Removes the MySQL test database
+      mysql_db:
+        name: test
+        state: absent
+        login_unix_socket: '{{ socket }}'
+
+    - name: Create a new database with name 'wordpress'
+      community.mysql.mysql_db:
+        name: wordpress
+        state: present
+        login_unix_socket: '{{ socket }}'

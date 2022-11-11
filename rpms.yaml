@@ -1,0 +1,46 @@
+---
+- name: Install services and make initial configuration for the owncloud host
+  hosts: all
+  become: yes
+  vars:
+    rpm_packages:
+      - epel-release
+      - epel-next-release
+      - vim
+      - zsh
+      - nmap
+      - mtr
+      - git
+      - postfix
+      - postgrey
+      - opendkim
+      - dovecot
+      - dovecot-pigeonhole
+#      - python3-managesieve
+      - nginx
+      - php-fpm
+      - mc
+      - wget
+      - curl
+      - certbot
+      - mariadb-server
+      - telnet
+      - net-tools
+      - cockpit-system
+      - cockpit-packagekit
+      - cockpit-storaged
+      - cockpit-navigator
+      - cockpit-pcp
+      - wordpress
+      - python3-certbot-nginx
+      - python3-PyMySQL
+      - unzip
+  remote_user: root
+  tasks:
+    - name: Cofigure DNF
+      ansible.builtin.shell: dnf config-manager --set-enabled crb
+    - name: Install rpm packages
+      package:
+        name: '{{ item }}'
+        state: latest
+      loop: '{{ rpm_packages }}'
