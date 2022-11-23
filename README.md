@@ -1,10 +1,10 @@
 # own_hosted_cloud
-Ansible playbooks needed to install postfix, dovecot, greylisting, roundcube, wordpress, nextcloud on your own host. There are several bits and dimes that are related to my own host andreybondarenko.com, I am too lazy to make it 100% interportablem, please make a pull request if you have ideas.
+Ansible playbooks needed to install postfix, dovecot, greylisting, roundcube, wordpress, nextcloud on your own host. There are several bits and dimes that are related to my own host andreybondarenko.com, I am too lazy to make it 100% interportable and indempotent, please make a pull request if you have ideas.
 
-  - Packages: all rpms we will need.
+  - Packages: install all rpms we will need.
   - User: create local user and put authorized keys.
   - Mysql: create evryting that is needed for the Wordpress instance and disable public network connections.
-  - Wordpress: installation + upload plugin + import plugin. Settings and import of the previous content by hands only.
+  - Wordpress: installation + upload plugin + import plugin. Settings and import of the previous content is possible only by hands.
   - Mail: postfix + opendkim + postgrey + dovecot + sieve
   - Reload: reload all services that we have.
 
