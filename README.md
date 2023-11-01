@@ -1,4 +1,7 @@
 # own_hosted_cloud
+
+UPD: this pet project moved to K8S
+
 Ansible playbooks needed to install postfix, dovecot, greylisting, roundcube, wordpress, nextcloud on your own host. There are several bits and dimes that are related to my own host andreybondarenko.com, I am too lazy to make it 100% interportable and indempotent, please make a pull request if you have ideas.
 
   - Packages: install all rpms we will need.
